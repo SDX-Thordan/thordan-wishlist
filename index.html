@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wunschliste</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --card: #181b22;
+      --card-hover: #1f232c;
+      --text: #e7e9ee;
+      --muted: #9aa0ab;
+      --accent: #c9a227;
+      --border: #2a2f3a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+    header { margin-bottom: 32px; }
+    h1 {
+      font-size: 2rem;
+      margin: 0 0 6px;
+      letter-spacing: -0.02em;
+    }
+    .subtitle { color: var(--muted); margin: 0; }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 28px 0 8px;
+      position: sticky;
+      top: 0;
+      padding: 16px 0;
+      background: var(--bg);
+      z-index: 5;
+    }
+    .chip {
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .chip:hover { background: var(--card-hover); }
+    .chip.active {
+      background: var(--accent);
+      color: #1a1a1a;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .category { margin-top: 36px; }
+    .category h2 {
+      font-size: 1.25rem;
+      margin: 0 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .category h2 .count {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    ul.items { list-style: none; margin: 0; padding: 0; }
+    li.item {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      transition: background 0.15s ease;
+    }
+    li.item:hover { background: var(--card-hover); }
+    .item-name { flex: 1; }
+    .item-name a { color: var(--accent); text-decoration: none; }
+    .item-name a:hover { text-decoration: underline; }
+    .qty {
+      font-size: 0.8rem;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px 8px;
+      white-space: nowrap;
+    }
+    .tag-optional {
+      font-size: 0.72rem;
+      color: var(--muted);
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      padding: 2px 8px;
+      white-space: nowrap;
+    }
+    footer {
+      margin-top: 56px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>🎁 Wunschliste</h1>
+      <p class="subtitle">Klick auf eine Kategorie zum Filtern.</p>
+    </header>
+
+    <nav class="filters" id="filters"></nav>
+
+    <main id="list"></main>
+
+    <footer>
+      Zuletzt gepflegt über Git · <span id="itemtotal"></span> Wünsche
+    </footer>
+  </div>
+
+  <script>
+    // ── Wunschliste bearbeiten: einfach hier Einträge ändern/hinzufügen ──
+    // name:     Anzeigetext
+    // qty:      (optional) Anzahl, z.B. "2x"
+    // optional: (optional) true = "optional"-Tag
+    // url:      (optional) Link
+    const data = [
+      {
+        category: "Tau",
+        items: [
+          { name: "Pathfinder", qty: "2x" },
+          { name: "Crisis Suits", qty: "1x" },
+          { name: "Stormsurge" },
+        ],
+      },
+      {
+        category: "Custodes",
+        items: [
+          { name: "Custodian Dreadnought (Horus Heresy)" },
+          { name: "Custodian Guard Sodality (Horus Heresy)", qty: "2x" },
+          { name: "Shield Captain (Horus Heresy)" },
+          { name: "Caladius Annihilator Tank" },
+        ],
+      },
+      {
+        category: "Painting",
+        items: [
+          { name: "Kolinsky Brushes Size 0" },
+          { name: "Kolinsky Brushes Size 1" },
+          {
+            name: "Harder & Steenbeck Fineline Düsensatz",
+            url: "https://harderairbrush.com/de/products/evo-2024-0-28mm-fineline-headset-with-nozzle-needle-aircap-seals",
+          },
+          { name: "Vallejo NMM Silver Set" },
+          { name: "Pro Acryl Bronze" },
+          { name: "Pro Acryl Dark Bronze" },
+        ],
+      },
+    ];
+
+    // Sonderfall: "Tau" ist als optionale Gesamtkategorie markiert
+    const optionalCategories = new Set(["Tau"]);
+
+    const filtersEl = document.getElementById("filters");
+    const listEl = document.getElementById("list");
+    let activeCategory = "Alle";
+
+    const totalItems = data.reduce((n, c) => n + c.items.length, 0);
+    document.getElementById("itemtotal").textContent = totalItems;
+
+    function makeChip(label) {
+      const chip = document.createElement("button");
+      chip.className = "chip" + (label === activeCategory ? " active" : "");
+      chip.textContent = label;
+      chip.onclick = () => { activeCategory = label; render(); };
+      return chip;
+    }
+
+    function renderFilters() {
+      filtersEl.innerHTML = "";
+      filtersEl.appendChild(makeChip("Alle"));
+      data.forEach((c) => filtersEl.appendChild(makeChip(c.category)));
+    }
+
+    function renderList() {
+      listEl.innerHTML = "";
+      data
+        .filter((c) => activeCategory === "Alle" || c.category === activeCategory)
+        .forEach((c) => {
+          const section = document.createElement("section");
+          section.className = "category";
+
+          const h2 = document.createElement("h2");
+          const optTag = optionalCategories.has(c.category)
+            ? ' <span class="tag-optional">optional</span>'
+            : "";
+          h2.innerHTML =
+            c.category +
+            optTag +
+            ' <span class="count">' + c.items.length + "</span>";
+          section.appendChild(h2);
+
+          const ul = document.createElement("ul");
+          ul.className = "items";
+          c.items.forEach((item) => {
+            const li = document.createElement("li");
+            li.className = "item";
+
+            const name = document.createElement("span");
+            name.className = "item-name";
+            name.innerHTML = item.url
+              ? '<a href="' + item.url + '" target="_blank" rel="noopener">' + item.name + "</a>"
+              : item.name;
+            li.appendChild(name);
+
+            if (item.optional) {
+              const t = document.createElement("span");
+              t.className = "tag-optional";
+              t.textContent = "optional";
+              li.appendChild(t);
+            }
+            if (item.qty) {
+              const q = document.createElement("span");
+              q.className = "qty";
+              q.textContent = item.qty;
+              li.appendChild(q);
+            }
+            ul.appendChild(li);
+          });
+          section.appendChild(ul);
+          listEl.appendChild(section);
+        });
+    }
+
+    function render() {
+      renderFilters();
+      renderList();
+    }
+
+    render();
+  </script>
+</body>
+</html>
