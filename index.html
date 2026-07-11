@@ -6,218 +6,232 @@
   <title>Wunschliste</title>
   <style>
     :root {
-      --bg: #0f1115;
-      --card: #181b22;
-      --card-hover: #1f232c;
-      --text: #e7e9ee;
-      --muted: #9aa0ab;
-      --accent: #c9a227;
-      --border: #2a2f3a;
+      --bg: #0d0f13;
+      --bg-glow: #14171d;
+      --card: #171a21;
+      --card-hover: #1d212a;
+      --text: #eef0f4;
+      --muted: #9297a3;
+      --faint: #666c78;
+      --gold: #c9a961;
+      --gold-soft: rgba(201, 169, 97, 0.14);
+      --border: #262b35;
+      --border-soft: #1e222b;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.25);
     }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f6f5f1;
+        --bg-glow: #ffffff;
+        --card: #ffffff;
+        --card-hover: #fbfaf6;
+        --text: #1c1e24;
+        --muted: #6b7280;
+        --faint: #9aa0ab;
+        --gold: #9a7d33;
+        --gold-soft: rgba(154, 125, 51, 0.12);
+        --border: #e4e2da;
+        --border-soft: #eceae2;
+        --shadow: 0 1px 2px rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
+      }
+    }
+
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: var(--bg);
+      background:
+        radial-gradient(1200px 500px at 50% -200px, var(--bg-glow), transparent 70%),
+        var(--bg);
       color: var(--text);
-      line-height: 1.5;
+      line-height: 1.55;
       -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
     }
-    .wrap {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 48px 20px 80px;
+    .wrap { max-width: 680px; margin: 0 auto; padding: 64px 22px 96px; }
+
+    header { text-align: center; margin-bottom: 8px; }
+    .eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin: 0 0 12px;
     }
-    header { margin-bottom: 32px; }
     h1 {
-      font-size: 2rem;
-      margin: 0 0 6px;
-      letter-spacing: -0.02em;
+      font-family: "Iowan Old Style", "Palatino Linotype", "Palatino", Georgia, serif;
+      font-weight: 600;
+      font-size: clamp(2.2rem, 6vw, 3rem);
+      line-height: 1.05;
+      margin: 0;
+      letter-spacing: -0.01em;
     }
-    .subtitle { color: var(--muted); margin: 0; }
+    .rule {
+      width: 56px; height: 2px; margin: 22px auto 10px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .subtitle { color: var(--muted); margin: 0; text-align: center; font-size: 0.95rem; }
 
     .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin: 28px 0 8px;
-      position: sticky;
-      top: 0;
-      padding: 16px 0;
-      background: var(--bg);
-      z-index: 5;
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 9px;
+      margin: 34px 0 6px;
+      position: sticky; top: 0; z-index: 5;
+      padding: 14px 0;
+      background:
+        radial-gradient(600px 120px at 50% 0, var(--bg-glow), transparent 80%),
+        var(--bg);
     }
     .chip {
-      cursor: pointer;
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-      padding: 8px 16px;
-      border-radius: 999px;
-      font-size: 0.9rem;
-      transition: all 0.15s ease;
+      cursor: pointer; font: inherit; font-size: 0.86rem;
+      border: 1px solid var(--border); background: var(--card); color: var(--text);
+      padding: 7px 15px; border-radius: 999px;
+      transition: background .15s ease, border-color .15s ease, color .15s ease;
       user-select: none;
     }
-    .chip:hover { background: var(--card-hover); }
+    .chip:hover { background: var(--card-hover); border-color: var(--gold); }
     .chip.active {
-      background: var(--accent);
-      color: #1a1a1a;
-      border-color: var(--accent);
+      background: var(--gold); color: #14120c; border-color: var(--gold);
       font-weight: 600;
     }
+    .chip .n { opacity: .6; margin-left: 6px; font-variant-numeric: tabular-nums; }
+    .chip.active .n { opacity: .8; }
 
-    .category { margin-top: 36px; }
+    .category { margin-top: 40px; }
     .category h2 {
-      font-size: 1.25rem;
-      margin: 0 0 14px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      display: flex; align-items: center; gap: 11px;
+      font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+      font-weight: 600; font-size: 1.3rem; margin: 0 0 16px;
     }
-    .category h2 .count {
-      font-size: 0.8rem;
-      color: var(--muted);
-      font-weight: 400;
-    }
+    .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; box-shadow: 0 0 0 3px var(--gold-soft); }
+    .cat-opt { font-size: 0.7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); font-weight: 500; font-family: inherit; }
+    .cat-n { margin-left: auto; font-size: 0.8rem; color: var(--faint); font-weight: 400; font-family: inherit; font-variant-numeric: tabular-nums; }
 
     ul.items { list-style: none; margin: 0; padding: 0; }
     li.item {
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
+      display: flex; align-items: center; gap: 14px;
       background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 16px;
-      margin-bottom: 8px;
-      transition: background 0.15s ease;
+      border: 1px solid var(--border-soft); border-left: 3px solid var(--_accent, var(--gold));
+      border-radius: 12px; padding: 14px 18px; margin-bottom: 10px;
+      box-shadow: var(--shadow);
+      transition: transform .12s ease, background .15s ease, border-color .15s ease;
     }
-    li.item:hover { background: var(--card-hover); }
-    .item-name { flex: 1; }
-    .item-name a { color: var(--accent); text-decoration: none; }
-    .item-name a:hover { text-decoration: underline; }
+    li.item:hover { background: var(--card-hover); transform: translateX(2px); }
+    .item-name { flex: 1; font-size: 1rem; }
+    .item-name a { color: inherit; text-decoration: none; border-bottom: 1px solid transparent; transition: border-color .15s; }
+    .item-name a:hover { border-bottom-color: var(--gold); }
+    .ext { display: inline-block; width: 13px; height: 13px; margin-left: 5px; vertical-align: -1px; color: var(--gold); opacity: .8; }
     .qty {
-      font-size: 0.8rem;
-      color: var(--accent);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 2px 8px;
-      white-space: nowrap;
+      font-size: 0.78rem; font-weight: 600; color: var(--gold);
+      background: var(--gold-soft); border-radius: 7px; padding: 3px 9px;
+      white-space: nowrap; font-variant-numeric: tabular-nums;
     }
-    .tag-optional {
-      font-size: 0.72rem;
-      color: var(--muted);
-      border: 1px dashed var(--border);
-      border-radius: 6px;
-      padding: 2px 8px;
-      white-space: nowrap;
-    }
-    footer {
-      margin-top: 56px;
-      color: var(--muted);
-      font-size: 0.85rem;
-      text-align: center;
-    }
+    .opt { font-size: 0.72rem; font-style: italic; color: var(--faint); white-space: nowrap; }
+
+    footer { margin-top: 64px; text-align: center; color: var(--faint); font-size: 0.82rem; }
+    footer .sep { margin: 0 8px; opacity: .5; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <h1>🎁 Wunschliste</h1>
-      <p class="subtitle">Klick auf eine Kategorie zum Filtern.</p>
+      <p class="eyebrow">Wunschliste</p>
+      <h1>Was ich mir wünsche</h1>
+      <div class="rule"></div>
+      <p class="subtitle">Wähle eine Kategorie zum Filtern.</p>
     </header>
 
     <nav class="filters" id="filters"></nav>
-
     <main id="list"></main>
 
     <footer>
-      Zuletzt gepflegt über Git · <span id="itemtotal"></span> Wünsche
+      <span id="itemtotal"></span> Wünsche<span class="sep">·</span>gepflegt über Git
     </footer>
   </div>
 
   <script>
-    // ── Wunschliste bearbeiten: einfach hier Einträge ändern/hinzufügen ──
-    // name:     Anzeigetext
-    // qty:      (optional) Anzahl, z.B. "2x"
-    // optional: (optional) true = "optional"-Tag
-    // url:      (optional) Link
+    // ─────────────────────────────────────────────────────────────
+    //  Wunschliste bearbeiten: einfach hier Einträge ändern.
+    //    name     – Anzeigetext (Pflicht)
+    //    qty      – Anzahl, z. B. "2x"        (optional)
+    //    url      – Link, Name wird klickbar  (optional)
+    //    optional – true für einzelnen Eintrag (optional)
+    //  Kategorie: name, accent (Farbe), optional (ganze Kategorie), items[]
+    // ─────────────────────────────────────────────────────────────
     const data = [
       {
         category: "Tau",
+        accent: "#e0664e",
+        optional: true,
         items: [
-          { name: "Pathfinder", qty: "2x" },
-          { name: "Crisis Suits", qty: "1x" },
-          { name: "Stormsurge" },
+          { name: "Pathfinder", qty: "2x", url: "https://www.warhammer.com/en-GB/shop/Pathfinder-Team-2017" },
+          { name: "Crisis Suits", qty: "1x", url: "https://www.games-workshop.com/en-US/XV8-Crisis-Battlesuits" },
+          { name: "Stormsurge", url: "https://www.games-workshop.com/en-US/KV128-Stormsurge" },
         ],
       },
       {
         category: "Custodes",
+        accent: "#c9a961",
         items: [
-          { name: "Custodian Dreadnought (Horus Heresy)" },
-          { name: "Custodian Guard Sodality (Horus Heresy)", qty: "2x" },
-          { name: "Shield Captain (Horus Heresy)" },
-          { name: "Caladius Annihilator Tank" },
+          { name: "Custodian Dreadnought (Horus Heresy)", url: "https://www.warhammer.com/en-US/shop/legio-custodes-custodian-dreadnought-2026" },
+          { name: "Custodian Guard Sodality (Horus Heresy)", qty: "2x", url: "https://www.warhammer.com/en-US/shop/legio-custodes-custodian-guard-sodality-2026" },
+          { name: "Shield Captain (Horus Heresy)", url: "https://www.warhammer.com/en-US/shop/legio-custodes-shield-captain-2026" },
+          { name: "Caladius Annihilator Tank", url: "https://www.warhammer.com/en-WW/shop/legio-custodes-caladius-grav-tank-annihilator-2026" },
         ],
       },
       {
         category: "Painting",
+        accent: "#6ea8c9",
         items: [
-          { name: "Kolinsky Brushes Size 0" },
-          { name: "Kolinsky Brushes Size 1" },
-          {
-            name: "Harder & Steenbeck Fineline Düsensatz",
-            url: "https://harderairbrush.com/de/products/evo-2024-0-28mm-fineline-headset-with-nozzle-needle-aircap-seals",
-          },
-          { name: "Vallejo NMM Silver Set" },
-          { name: "Pro Acryl Bronze" },
-          { name: "Pro Acryl Dark Bronze" },
+          { name: "Kolinsky Brushes Size 0", url: "https://www.winsornewton.com/products/series-7-kolinsky-sable-brush-series-7-kolinsky-sable-mintature-painting-brush-round" },
+          { name: "Kolinsky Brushes Size 1", url: "https://www.winsornewton.com/products/series-7-kolinsky-sable-brush-series-7-kolinsky-sable-mintature-painting-brush-round" },
+          { name: "Harder & Steenbeck Fineline Düsensatz", url: "https://harderairbrush.com/de/products/evo-2024-0-28mm-fineline-headset-with-nozzle-needle-aircap-seals" },
+          { name: "Vallejo NMM Silver Set", url: "https://acrylicosvallejo.com/en/producto/hobby/sets/basic-en/silver-nmm-set-72394/" },
+          { name: "Pro Acryl Bronze", url: "https://monumenthobbies.com/products/pro-acryl-bronze" },
+          { name: "Pro Acryl Dark Bronze", url: "https://fusionscalehobbies.com/products/mpa-s24" },
         ],
       },
     ];
 
-    // Sonderfall: "Tau" ist als optionale Gesamtkategorie markiert
-    const optionalCategories = new Set(["Tau"]);
+    const EXT_ICON =
+      '<svg class="ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>';
 
     const filtersEl = document.getElementById("filters");
     const listEl = document.getElementById("list");
-    let activeCategory = "Alle";
+    let active = "Alle";
 
-    const totalItems = data.reduce((n, c) => n + c.items.length, 0);
-    document.getElementById("itemtotal").textContent = totalItems;
+    const total = data.reduce((n, c) => n + c.items.length, 0);
+    document.getElementById("itemtotal").textContent = total;
 
-    function makeChip(label) {
-      const chip = document.createElement("button");
-      chip.className = "chip" + (label === activeCategory ? " active" : "");
-      chip.textContent = label;
-      chip.onclick = () => { activeCategory = label; render(); };
-      return chip;
+    function chip(label, count, accent) {
+      const b = document.createElement("button");
+      b.className = "chip" + (label === active ? " active" : "");
+      b.innerHTML = label + (count != null ? ' <span class="n">' + count + "</span>" : "");
+      if (accent && label !== active) b.style.borderColor = "";
+      b.onclick = () => { active = label; render(); };
+      return b;
     }
 
     function renderFilters() {
       filtersEl.innerHTML = "";
-      filtersEl.appendChild(makeChip("Alle"));
-      data.forEach((c) => filtersEl.appendChild(makeChip(c.category)));
+      filtersEl.appendChild(chip("Alle", total));
+      data.forEach((c) => filtersEl.appendChild(chip(c.category, c.items.length, c.accent)));
     }
 
     function renderList() {
       listEl.innerHTML = "";
       data
-        .filter((c) => activeCategory === "Alle" || c.category === activeCategory)
+        .filter((c) => active === "Alle" || c.category === active)
         .forEach((c) => {
           const section = document.createElement("section");
           section.className = "category";
 
           const h2 = document.createElement("h2");
-          const optTag = optionalCategories.has(c.category)
-            ? ' <span class="tag-optional">optional</span>'
-            : "";
           h2.innerHTML =
+            '<span class="dot" style="background:' + c.accent + '"></span>' +
             c.category +
-            optTag +
-            ' <span class="count">' + c.items.length + "</span>";
+            (c.optional ? ' <span class="cat-opt">optional</span>' : "") +
+            '<span class="cat-n">' + c.items.length + "</span>";
           section.appendChild(h2);
 
           const ul = document.createElement("ul");
@@ -225,19 +239,20 @@
           c.items.forEach((item) => {
             const li = document.createElement("li");
             li.className = "item";
+            li.style.setProperty("--_accent", c.accent);
 
             const name = document.createElement("span");
             name.className = "item-name";
             name.innerHTML = item.url
-              ? '<a href="' + item.url + '" target="_blank" rel="noopener">' + item.name + "</a>"
+              ? '<a href="' + item.url + '" target="_blank" rel="noopener">' + item.name + EXT_ICON + "</a>"
               : item.name;
             li.appendChild(name);
 
             if (item.optional) {
-              const t = document.createElement("span");
-              t.className = "tag-optional";
-              t.textContent = "optional";
-              li.appendChild(t);
+              const o = document.createElement("span");
+              o.className = "opt";
+              o.textContent = "optional";
+              li.appendChild(o);
             }
             if (item.qty) {
               const q = document.createElement("span");
@@ -252,11 +267,7 @@
         });
     }
 
-    function render() {
-      renderFilters();
-      renderList();
-    }
-
+    function render() { renderFilters(); renderList(); }
     render();
   </script>
 </body>
