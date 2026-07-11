@@ -11,10 +11,11 @@ Einfach dort Einträge ändern, hinzufügen oder entfernen und committen:
 ```js
 {
   category: "Tau",
+  accent: "#e0664e",   // Farbe für Punkt + Rand
+  optional: true,       // (nein) ganze Kategorie als "optional" markieren
   items: [
-    { name: "Pathfinder", qty: "2x" },   // qty ist optional
+    { name: "Pathfinder", qty: "2x", url: "https://..." },
     { name: "Stormsurge" },
-    { name: "Etwas mit Link", url: "https://..." },
   ],
 },
 ```
@@ -26,9 +27,10 @@ Felder pro Eintrag:
 | `name`     | ja      | Anzeigetext                           |
 | `qty`      | nein    | Anzahl, z. B. `"2x"`                   |
 | `url`      | nein    | Link (Name wird klickbar)             |
-| `optional` | nein    | `true` → zeigt einen „optional"-Tag   |
+| `optional` | nein    | `true` → zeigt einen „optional"-Hinweis |
 
-Eine ganze Kategorie als optional markieren: den Namen in `optionalCategories` eintragen.
+Felder pro Kategorie: `category` (Name), `accent` (Akzentfarbe), `optional` (ganze
+Kategorie), `items` (die Wünsche).
 
 ## GitHub Pages aktivieren
 
