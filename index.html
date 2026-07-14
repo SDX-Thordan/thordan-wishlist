@@ -127,6 +127,7 @@
       white-space: nowrap; font-variant-numeric: tabular-nums;
     }
     .opt { font-size: 0.72rem; font-style: italic; color: var(--faint); white-space: nowrap; }
+    .note { font-size: 0.72rem; font-style: italic; color: var(--faint); white-space: nowrap; }
 
     footer { margin-top: 64px; text-align: center; color: var(--faint); font-size: 0.82rem; }
     footer .sep { margin: 0 8px; opacity: .5; }
@@ -177,6 +178,8 @@
           { name: "Custodian Dreadnought (Horus Heresy)", qty: "2x", url: "https://www.warhammer.com/en-US/shop/legio-custodes-custodian-dreadnought-2026" },
           { name: "Custodian Guard Sodality (Horus Heresy) (Speere)", qty: "2x", url: "https://www.warhammer.com/en-US/shop/legio-custodes-custodian-guard-sodality-2026" },
           { name: "Caladius Annihilator Tank", url: "https://www.warhammer.com/en-WW/shop/legio-custodes-caladius-grav-tank-annihilator-2026" },
+          { name: "Telemon Heavy Dreadnought (Horus Heresy)", note: "noch nicht draußen" },
+          { name: "Gyrfalcon Jetbikes (Horus Heresy)", note: "noch nicht draußen" },
         ],
       },
       {
@@ -262,6 +265,12 @@
               o.className = "opt";
               o.textContent = "optional";
               li.appendChild(o);
+            }
+            if (item.note) {
+              const n = document.createElement("span");
+              n.className = "note";
+              n.textContent = item.note;
+              li.appendChild(n);
             }
             if (item.qty) {
               const q = document.createElement("span");
