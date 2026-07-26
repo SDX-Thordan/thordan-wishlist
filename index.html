@@ -128,6 +128,8 @@
     }
     .opt { font-size: 0.72rem; font-style: italic; color: var(--faint); white-space: nowrap; }
     .note { font-size: 0.72rem; font-style: italic; color: var(--faint); white-space: nowrap; }
+    li.item.done { opacity: .55; }
+    li.item.done .item-name { text-decoration: line-through; }
 
     footer { margin-top: 64px; text-align: center; color: var(--faint); font-size: 0.82rem; }
     footer .sep { margin: 0 8px; opacity: .5; }
@@ -191,7 +193,7 @@
           { name: "Kolinsky Brushes Size 0" },
           { name: "Kolinsky Brushes Size 1" },
           { name: "Harder & Steenbeck Fineline Düsensatz", url: "https://harderairbrush.com/de/products/evo-2024-0-28mm-fineline-headset-with-nozzle-needle-aircap-seals" },
-          { name: "Vallejo NMM Silver Set", url: "https://acrylicosvallejo.com/en/producto/hobby/sets/basic-en/silver-nmm-set-72394/" },
+          { name: "Vallejo NMM Silver Set", done: true, url: "https://acrylicosvallejo.com/en/producto/hobby/sets/basic-en/silver-nmm-set-72394/" },
           { name: "Pro Acryl Bronze", url: "https://monumenthobbies.com/products/pro-acryl-bronze" },
           { name: "Pro Acryl Dark Bronze", url: "https://fusionscalehobbies.com/products/mpa-s24" },
           { name: "Redgrass Wet Palette V2", optional: true, url: "https://www.redgrasscreative.com/product/v2-wet-palette/" },
@@ -252,7 +254,7 @@
           ul.className = "items";
           c.items.forEach((item) => {
             const li = document.createElement("li");
-            li.className = "item";
+            li.className = "item" + (item.done ? " done" : "");
             li.style.setProperty("--_accent", c.accent);
 
             const name = document.createElement("span");
