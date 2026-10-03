@@ -127,6 +127,12 @@
       white-space: nowrap; font-variant-numeric: tabular-nums;
     }
     .opt { font-size: 0.72rem; font-style: italic; color: var(--faint); white-space: nowrap; }
+    .prio {
+      font-size: 0.72rem; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums;
+      border: 1px solid var(--border); color: var(--muted); border-radius: 7px; padding: 2px 8px;
+    }
+    .prio.p1 { background: var(--gold); border-color: var(--gold); color: #14120c; }
+    .prio.p2 { border-color: var(--gold); color: var(--gold); }
     .note { font-size: 0.72rem; font-style: italic; color: var(--faint); white-space: nowrap; }
     li.item.done { opacity: .55; }
     li.item.done .item-name { text-decoration: line-through; }
@@ -159,6 +165,7 @@
     //    qty      – Anzahl, z. B. "2x"        (optional)
     //    url      – Link, Name wird klickbar  (optional)
     //    optional – true für einzelnen Eintrag (optional)
+    //    prio     – Priorität, 1 = am wichtigsten (optional, sortiert)
     //  Kategorie: name, accent (Farbe), optional (ganze Kategorie), items[]
     // ─────────────────────────────────────────────────────────────
     const data = [
@@ -168,29 +175,25 @@
         optional: true,
         items: [
           { name: "Pathfinder", qty: "1x", url: "https://www.warhammer.com/en-GB/shop/Pathfinder-Team-2017" },
-          { name: "Crisis Suits", url: "https://www.games-workshop.com/en-US/XV8-Crisis-Battlesuits" },
           { name: "Stormsurge", url: "https://www.games-workshop.com/en-US/KV128-Stormsurge" },
           { name: "Stormwave Arms 02 (Stormsurge Bits)", url: "https://thecustombit.com/producto/stormwave-arms-02/" },
-          { name: "Hammerhead Gunship", qty: "2x", url: "https://www.games-workshop.com/Tau-Empire-Hammerhead-Gunship" },
         ],
       },
       {
         category: "Custodes",
         accent: "#c9a961",
         items: [
-          { name: "Custodian Dreadnought (Horus Heresy)", qty: "2x", url: "https://www.warhammer.com/en-US/shop/legio-custodes-custodian-dreadnought-2026" },
-          { name: "Custodian Guard Sodality (Horus Heresy) (Speere)", qty: "2x", url: "https://www.warhammer.com/en-US/shop/legio-custodes-custodian-guard-sodality-2026" },
-          { name: "Telemon Heavy Dreadnought (Horus Heresy)", note: "noch nicht draußen" },
-          { name: "Gyrfalcon Jetbikes (Horus Heresy)", note: "noch nicht draußen" },
-          { name: "Aquilon Custodians (Horus Heresy)", note: "noch nicht draußen" },
-          { name: "Caladius Annihilator Tank", optional: true, url: "https://www.warhammer.com/en-WW/shop/legio-custodes-caladius-grav-tank-annihilator-2026" },
+          { name: "Kampfpatrouille: Adeptus Custodes", prio: 1, url: "https://shop.battlefield-berlin.de/katalog/artikelinfo/93859/kampfpatrouille_-adeptus-custodes" },
+          { name: "Aquilon-Terminatorgemeinschaft", prio: 2, url: "https://shop.battlefield-berlin.de/katalog/artikelinfo/93871/custodes_-aquilon-terminatorgemeinschaft" },
+          { name: "Schwerer Telemon-Dreadnought", prio: 2, url: "https://shop.battlefield-berlin.de/katalog/artikelinfo/93861/custodes_-schwerer-telemon-dreadnought" },
+          { name: "Gyrfalcon-Jetbike-Gemeinschaft", prio: 3, url: "https://shop.battlefield-berlin.de/katalog/artikelinfo/93862/custodes_-gyrfalcon-jetbike-gemeinschaft" },
         ],
       },
       {
-        category: "StarCraft",
+        category: "Age of Sigmar",
         accent: "#4fb0c6",
         items: [
-          { name: "Protoss Starter Set", url: "https://starcraft-tmg.com/shop/pre-orders/starcraft-protoss-starter-set" },
+          { name: "Khazalite Holds Army Set", note: "noch nicht draußen" },
         ],
       },
       {
@@ -260,7 +263,9 @@
 
           const ul = document.createElement("ul");
           ul.className = "items";
-          c.items.forEach((item) => {
+          // Einträge mit prio zuerst (1, 2, 3 …), danach alle ohne – sonst Reihenfolge wie oben
+          const byPrio = (item) => (item.prio == null ? Infinity : item.prio);
+          [...c.items].sort((a, b) => byPrio(a) - byPrio(b)).forEach((item) => {
             const li = document.createElement("li");
             li.className = "item" + (item.done ? " done" : "");
             li.style.setProperty("--_accent", c.accent);
@@ -272,6 +277,12 @@
               : item.name;
             li.appendChild(name);
 
+            if (item.prio != null) {
+              const p = document.createElement("span");
+              p.className = "prio p" + item.prio;
+              p.textContent = "Prio " + item.prio;
+              li.appendChild(p);
+            }
             if (item.optional) {
               const o = document.createElement("span");
               o.className = "opt";
