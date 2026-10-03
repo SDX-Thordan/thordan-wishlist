@@ -14,7 +14,7 @@ Einfach dort Einträge ändern, hinzufügen oder entfernen und committen:
   accent: "#e0664e",   // Farbe für Punkt + Rand
   optional: true,       // (nein) ganze Kategorie als "optional" markieren
   items: [
-    { name: "Pathfinder", qty: "2x", url: "https://..." },
+    { name: "Pathfinder", qty: "2x", prio: 1, url: "https://..." },
     { name: "Stormsurge" },
   ],
 },
@@ -28,6 +28,7 @@ Felder pro Eintrag:
 | `qty`      | nein    | Anzahl, z. B. `"2x"`                   |
 | `url`      | nein    | Link (Name wird klickbar)             |
 | `optional` | nein    | `true` → zeigt einen „optional"-Hinweis |
+| `prio`     | nein    | Priorität, z. B. `1` (am wichtigsten); Einträge werden danach sortiert, ohne `prio` kommen ans Ende |
 
 Felder pro Kategorie: `category` (Name), `accent` (Akzentfarbe), `optional` (ganze
 Kategorie), `items` (die Wünsche).
